@@ -11,9 +11,17 @@ class IdeaController extends Controller
     public function show(Idea $idea)
     {
         try {
-            $idea->delete();
+            return view('ideas.show', compact('idea'));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 
-            return view('ideas.show');
+    public function edit(Idea $idea)
+    {
+        try {
+            $editing = true;
+            return view('ideas.show', compact('idea', 'editing'));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -24,11 +32,11 @@ class IdeaController extends Controller
         try {
 
             $request->validate([
-                'idea' => 'required|min:5|max:240'
+                'content' => 'required|min:5|max:240'
             ]);
 
-            $idea = Idea::create([
-                'content' => $request->input('idea')
+            Idea::create([
+                'content' => $request->input('content')
             ]);
 
             return redirect()->route('dashboard')->with('success', 'Idea created successfully');
@@ -43,6 +51,23 @@ class IdeaController extends Controller
             $idea->delete();
 
             return redirect()->route('dashboard')->with('success', 'Idea deleted successfully');
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function update(Idea $idea)
+    {
+        try {
+
+            request()->validate([
+                'content' => 'required|min:5|max:240'
+            ]);
+
+            $idea->content = request()->get('content');
+            $idea->save();
+
+            return redirect()->route('ideas.show', $idea->id)->with('success', 'Idea updated successfully');
         } catch (\Throwable $th) {
             throw $th;
         }
