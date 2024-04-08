@@ -12,6 +12,7 @@ class CommentController extends Controller
     {
         try {
             $comment = new Comment();
+            $comment->user_id = auth()->id();
             $comment->idea_id = $idea->id;
             $comment->content = request()->get('content');
             $comment->save();

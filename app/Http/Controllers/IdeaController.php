@@ -31,13 +31,13 @@ class IdeaController extends Controller
     {
         try {
 
-            $request->validate([
+            $validated = $request->validate([
                 'content' => 'required|min:5|max:240'
             ]);
 
-            Idea::create([
-                'content' => $request->input('content')
-            ]);
+            $validated['user_id'] = auth()->id();
+
+            Idea::create($validated);
 
             return redirect()->route('dashboard')->with('success', 'Idea created successfully');
         } catch (\Throwable $th) {
