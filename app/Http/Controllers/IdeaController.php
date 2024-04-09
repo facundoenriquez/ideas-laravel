@@ -20,6 +20,9 @@ class IdeaController extends Controller
     public function edit(Idea $idea)
     {
         try {
+            if (auth()->id() !== $idea->user->id) {
+                abort(404);
+            }
             $editing = true;
             return view('ideas.show', compact('idea', 'editing'));
         } catch (\Throwable $th) {
@@ -48,6 +51,10 @@ class IdeaController extends Controller
     public function destroy(Idea $idea)
     {
         try {
+            if (auth()->id() !== $idea->user->id) {
+                abort(404);
+            }
+
             $idea->delete();
 
             return redirect()->route('dashboard')->with('success', 'Idea deleted successfully');
@@ -59,6 +66,9 @@ class IdeaController extends Controller
     public function update(Idea $idea)
     {
         try {
+            if (auth()->id() !== $idea->user->id) {
+                abort(404);
+            }
 
             request()->validate([
                 'content' => 'required|min:5|max:240'
