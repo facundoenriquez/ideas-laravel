@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\WelcomeEmail;
 use App\Models\Idea;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class FeedController extends Controller
 {
-    function index()
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke(Request $request)
     {
-        // for testing email blade for sending
-        // return new WelcomeEmail(auth()->user());
+        $user = auth()->user();
 
-        $ideas = Idea::with('user','comments.user')->orderBy('created_at', 'DESC');
+        $followingsIDs = $user->followings()->pluck('user_id');
+
+        $ideas = Idea::with('user', 'comments.user')->orderBy('created_at', 'DESC');
 
         if (request()->has('search')) {
             $ideas = $ideas->where('content', 'like', '%' . request()->get('search') . '%');
