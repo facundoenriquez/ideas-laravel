@@ -2,23 +2,26 @@
     <div class="px-3 pt-4 pb-2">
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
-                <img style="width:50px" class="me-2 avatar-sm rounded-circle" src="{{$idea->user->getImageUrl()}}" alt="{{$idea->user->name}}">
+                <img style="width:50px" class="me-2 avatar-sm rounded-circle" src="{{ $idea->user->getImageUrl() }}"
+                    alt="{{ $idea->user->name }}">
                 <div>
                     <h5 class="card-title mb-0"><a href="{{ route('users.show', $idea->user->id) }}">
                             {{ $idea->user->name }}
                         </a></h5>
                 </div>
             </div>
-            <div>
-                <form action="{{ route('ideas.destroy', $idea->id) }}" method="POST">
-                    @csrf
-                    @method('delete')
-                    <a href="{{ route('ideas.show', $idea->id) }}"> View </a>
-                    @if (auth()->id() === $idea->user->id)
+            <div class="d-flex">
+                <a href="{{ route('ideas.show', $idea->id) }}"> View </a>
+                @auth
+                    @can('idea.edit', $idea)
                         <a class="mx-2" href="{{ route('ideas.edit', $idea->id) }}"> Edit </a>
-                        <button class="ms-1 btn btn-danger btn-sm"> X </button>
-                    @endif
-                </form>
+                        <form action="{{ route('ideas.destroy', $idea->id) }}" method="POST">
+                            @csrf
+                            @method('delete')
+                            <button class="ms-1 btn btn-danger btn-sm"> X </button>
+                        </form>
+                    @endcan
+                @endauth
             </div>
         </div>
     </div>
@@ -46,9 +49,9 @@
             @include('ideas.shared.like-button')
             <div>
                 <span class="fs-6 fw-light text-muted"> <span class="fas fa-clock"> </span>
-                    {{ $idea->created_at }} </span>
+                    {{ $idea->created_at->diffForHumans() }} </span>
             </div>
         </div>
-        @include('shared.comments-box')
+        @include('ideas.shared.comments-box')
     </div>
 </div>
