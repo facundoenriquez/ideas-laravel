@@ -1,5 +1,7 @@
 @extends('layout.layout')
 
+@section('title', 'Dashboard')
+
 @section('content')
     <div class="row">
         <div class="col-3">
@@ -13,7 +15,7 @@
                 <div class="mt-3">
                     @include('ideas.shared.idea-card')
                 </div>
-                @empty
+            @empty
                 <p class="text-center mt-4">No results Found.</p>
             @endforelse
             {{ $ideas->withQueryString()->links() }}
