@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\CommentController as AdminCommentController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\IdeaController as AdminIdeaController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\IdeaController;
@@ -34,5 +37,12 @@ Route::get('/terms', function () {
     return view('terms');
 })->name('terms');
 
+Route::middleware(['auth', 'can:admin'])->prefix('/admin')->as('admin.')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard')->middleware('auth', 'admin');
+    Route::resource('users', AdminUserController::class)->only('index');
+
+    Route::resource('ideas', AdminIdeaController::class)->only('index');
+
+    Route::resource('comments', AdminCommentController::class)->only('index', 'destroy');
+});
